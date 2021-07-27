@@ -1,13 +1,16 @@
+use super::instruction::*;
 use super::stack::*;
 
-pub struct Machine<O> {
-    stack: Stack<O>
+pub struct Machine<'a, O> {
+    stack: Stack<O>,
+    instr_table: InstructionDict<'a, O>
 }
 
-impl <O> Machine<O> {
-    pub fn new() -> Machine<O> {
+impl <'a, O> Machine<'a, O> {
+    pub fn new(instr_table: InstructionDict<'a, O>) -> Machine<'a, O> {
         Machine {
-            stack: Stack::new()
+            stack: Stack::new(),
+            instr_table: instr_table
         }
     }
 
