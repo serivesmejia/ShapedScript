@@ -1,27 +1,37 @@
 use crate::vm::instruction::*;
-use crate::util::write_once_dict::WriteOnceDict;
-use crate::util::dict::Dict;
 
 pub struct Bytecode<O> {
     pub code: Vec<usize>,
     pub symbols: Vec<(usize, String)>,
     pub data: Vec<O>,
-    pub labels: Vec<(usize, String)>,
+    pub labels: Vec<(usize, usize)>,
 
     pub instruction_dict: InstructionDict<O>
+}
+
+impl <O> Bytecode<O> {
+    pub fn label_ip(&self, label: usize) -> Option<usize> {
+        for l in self.labels.as_slice() {
+            if l.0 == label {
+                return Some(l.1);
+            }
+        }
+
+        None
+    }
 }
 
 pub struct BytecodeBuilder<O> {
     pub instruction_dict: InstructionDict<O>,
     pub instructions: Vec<usize>,
-    pub labels: WriteOnceDict<usize>,
+    pub labels: Vec<(usize, usize)>,
     pub data: Vec<O>
 }
 
 impl <O: PartialEq> BytecodeBuilder <O> {
     pub fn new(instr_dict: InstructionDict<O>) -> BytecodeBuilder<O> {
-        let mut labels = WriteOnceDict::new();
-        labels.add("main", 0);
+        let mut labels = vec!();
+        labels.push((0, 0));
 
         BytecodeBuilder {
             instruction_dict: instr_dict,
@@ -70,13 +80,18 @@ impl <O: PartialEq> BytecodeBuilder <O> {
         }
     }
 
-    pub fn build(self) -> Bytecode<O> {
-        let mut labels = vec!();
-
-        for k in self.labels.keys() {
-            let i = self.labels.get(&k).unwrap();
-            labels.push((*i, k))
+    pub fn add_label(&mut self, label: usize) {
+        for (i, l) in &self.labels {
+            if *l == label {
+                panic!("Label {} has already been defined", label);
+            }
         }
+
+        self.labels.push((label, self.instructions.len()))
+    }
+
+    pub fn build(self) -> Bytecode<O> {
+        let mut labels = self.labels.clone();
         labels.sort_by(|lhs, rhs| lhs.0.cmp(&rhs.0));
 
         let symbols = self.instruction_dict.get_symbols();

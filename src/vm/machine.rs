@@ -50,10 +50,16 @@ impl <'a, O> Machine<O> {
 
     pub fn op_pop(&mut self) -> O {
         self.stack.pop()
-    } 
+    }
 
     pub fn op_read(&self) -> &[O] {
         self.stack.read()
+    }
+
+    pub fn i_jump(&mut self, label: usize) {
+        self.instruction_pointer = self.bytecode.label_ip(label).unwrap_or_else(
+            || panic!("Tried jump to undefined label {}", label)
+        );
     }
 
     pub fn get_const_data(&self, index: usize) -> &O {
