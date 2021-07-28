@@ -12,6 +12,8 @@ fn main() {
 
     let mut builder = BytecodeBuilder::new(instruction_dict);
     builder.add_p("PSH", vec!(1));
+    builder.add_p("PSH", vec!(1));
+    builder.add_np("ADD");
     builder.add_np("PRT");
  
     let mut vm: Machine<Operand> = Machine::new(builder.build());

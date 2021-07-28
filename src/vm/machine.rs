@@ -33,7 +33,7 @@ impl <'a, O> Machine<O> {
             let instruction = self.bytecode.instruction_dict.get(opcode);
 
             let fnc = instruction.func;
-            fnc(self, instruction, args.as_slice());
+            fnc(self, args.as_slice());
         }
     }
 
@@ -54,5 +54,11 @@ impl <'a, O> Machine<O> {
 
     pub fn op_read(&self) -> &[O] {
         self.stack.read()
+    }
+
+    pub fn get_const_data(&self, index: usize) -> &O {
+        self.bytecode.data.get(index).unwrap_or_else(
+            || panic!("Index {} of constant data is out of bounds.", index)
+        )
     }
 }

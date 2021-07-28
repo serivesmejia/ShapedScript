@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use super::machine::*;
 
-pub type InstructionFunc<O> = fn(machine: &mut Machine<O>, instruction: &Instruction<O>, args: &[usize]);
+pub type InstructionFunc<O> = fn(machine: &mut Machine<O>, args: &[usize]);
 
 pub struct Instruction<O> {
     pub opcode: usize,
