@@ -16,10 +16,12 @@ pub fn shaped_instructions() -> InstructionDict<Operand> {
     dict.add(1, "JMP", 1, jump_instr);
 
     // MATH
-    dict.add(2, "ADD", 0, add_instr);
+    dict.add(2, "PLS", 0, plus_instr);
+    dict.add(3, "TMS", 0, times_instr);
+    dict.add(4, "DIV", 0, div_instr);
  
     // SYSTEM
-    dict.add(3, "PRT", 0, print_instr);
+    dict.add(5, "PRT", 0, print_instr);
 
     dict
 }
