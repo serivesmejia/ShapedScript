@@ -1,13 +1,13 @@
 pub trait Dict {
     type Element;
 
-    pub fn add(&mut self, k: &str, v: Self::Element);
+    fn add(&mut self, k: &str, v: Self::Element);
 
-    pub fn is_empty(&self) -> bool;
+    fn is_empty(&self) -> bool;
 
-    pub fn contains_k(name: &str) -> bool;
+    fn contains_k(&self, name: &str) -> bool;
 
-    pub fn contains_v(v: Self::Element) -> bool;
+    fn contains_v(&self, v: &Self::Element) -> bool;
 
-    pub fn get(&self, name: &str) -> Option<&T>;
+    fn get(&self, name: &str) -> Option<&Self::Element>;
 }

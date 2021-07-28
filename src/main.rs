@@ -2,22 +2,18 @@ mod vm;
 mod util;
 
 use vm::machine::Machine;
-use vm::instruction::*;
-
-use util::write_once_dict::WriteOnceDict;
+use vm::instructions::shaped_instructions;
+use vm::bytecode::*;
 
 type Operand = i64;
 
-fn push_instr(machine: &mut Machine<Operand>, instruction: Instruction<Operand>, args: &[usize]) {
-
-}
-
 fn main() {
-    let mut table = InstructionDict::new();
-    table.add(0, "PSH", 1, push_instr);
+    let instruction_dict = shaped_instructions();
 
-    let mut vm: Machine<Operand> = Machine::new(table);
-
-    vm.op_push(32);
-    println!("{}", vm.op_pop());
+    let mut builder = BytecodeBuilder::new(instruction_dict);
+    builder.add_p("PSH", vec!(1));
+    builder.add_np("PRT");
+ 
+    let mut vm: Machine<Operand> = Machine::new(builder.build());
+    vm.run();
 }

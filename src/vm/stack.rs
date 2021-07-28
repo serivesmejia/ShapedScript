@@ -23,4 +23,8 @@ impl <O> Stack<O> {
             None => panic!("Can't pop from an empty stack")
         }
     }
+
+    pub fn read(&self) -> &[O] {
+        &self.v
+    }
 }
