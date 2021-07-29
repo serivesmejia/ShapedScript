@@ -81,7 +81,7 @@ impl <O: PartialEq> BytecodeBuilder <O> {
     }
 
     pub fn add_label(&mut self, label: usize) {
-        for (i, l) in &self.labels {
+        for (_, l) in &self.labels {
             if *l == label {
                 panic!("Label {} has already been defined", label);
             }

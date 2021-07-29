@@ -12,5 +12,5 @@ pub fn double_pop(machine: &mut Machine<Operand>) -> (Operand, Operand) {
 }
 
 pub fn double_pop_usize(machine: &mut Machine<Operand>) -> (usize, usize) {
-    (machine.op_pop().try_into().unwrap(), machine.op_pop().try_into().unwrap())
+    (machine.op_pop() as usize, machine.op_pop() as usize)
 }

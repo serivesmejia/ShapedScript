@@ -24,7 +24,17 @@ pub fn shaped_instructions() -> InstructionDict<Operand> {
     dict.a_add("CALL", 1, call_instr);
     dict.a_add("RET", 0, return_instr);
 
+    // CORE - FRAME STACK
+
+    // pushing local values
     dict.a_add("PUSHL", 2, push_local_instr);
+    // ..and from the stack
+    dict.a_add("PUSHL_OSV", 1, push_local_ostackv_instr);
+    dict.a_add("PUSHL_OSNV", 0, push_local_ostacknv_instr);
+
+    // pushing local values to the stack
+    dict.a_add("PUSHO_L", 1, push_ostack_local_instr);
+    dict.a_add("PUSHON_L", 0, push_ostackn_local_instr);
 
     // MATH
     dict.a_add("PLUS", 0, plus_instr);
@@ -34,14 +44,14 @@ pub fn shaped_instructions() -> InstructionDict<Operand> {
     dict.a_add("POW", 0, pow_instr);
 
     // SYSTEM
-    dict.a_add("PRINTOS", 0, print_ostack_instr);
-    dict.a_add("PRINTSS", 0, print_string_ostack_instr);
+    dict.a_add("PRINT_OS", 0, print_ostack_instr);
+    dict.a_add("PRINT_SS", 0, print_string_ostack_instr);
 
     // STRINGS
-    dict.a_add("CONCATOS", 0, concat_twostr_ostack_instr);
-    dict.a_add("INVCONCATOS", 0, inverse_concat_twostr_ostack_instr);
+    dict.a_add("CONCAT_OS", 0, concat_twostr_ostack_instr);
+    dict.a_add("INV_CONCAT_OS", 0, inverse_concat_twostr_ostack_instr);
 
-    dict.a_add("CONCATS", 2, concat_twostr_instr);
+    dict.a_add("CONCAT", 2, concat_twostr_instr);
 
     dict
 }
