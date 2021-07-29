@@ -1,41 +1,41 @@
+use std::collections::HashMap;
+use std::collections::BTreeMap;
+
 use crate::vm::instruction::*;
 
 pub struct Bytecode<O> {
     pub code: Vec<usize>,
-    pub symbols: Vec<(usize, String)>,
+    pub symbols: HashMap<usize, String>,
     pub data: Vec<O>,
-    pub labels: Vec<(usize, usize)>,
+    pub predef_strings: HashMap<usize, String>,
+    pub labels: BTreeMap<usize, usize>,
 
     pub instruction_dict: InstructionDict<O>
 }
 
 impl <O> Bytecode<O> {
-    pub fn label_ip(&self, label: usize) -> Option<usize> {
-        for l in self.labels.as_slice() {
-            if l.0 == label {
-                return Some(l.1);
-            }
-        }
-
-        None
+    pub fn label_ip(&self, label: usize) -> Option<&usize> {
+        self.labels.get(&label)
     }
 }
 
 pub struct BytecodeBuilder<O> {
     pub instruction_dict: InstructionDict<O>,
     pub instructions: Vec<usize>,
-    pub labels: Vec<(usize, usize)>,
+    pub predef_strings: HashMap<usize, String>,
+    pub labels: BTreeMap<usize, usize>,
     pub data: Vec<O>
 }
 
 impl <O: PartialEq> BytecodeBuilder <O> {
     pub fn new(instr_dict: InstructionDict<O>) -> BytecodeBuilder<O> {
-        let mut labels = vec!();
-        labels.push((0, 0));
+        let mut labels = BTreeMap::new();
+        labels.insert(0, 0);
 
         BytecodeBuilder {
             instruction_dict: instr_dict,
             instructions: Vec::new(),
+            predef_strings: HashMap::new(),
             labels: labels,
             data: Vec::new()
         }
@@ -87,19 +87,30 @@ impl <O: PartialEq> BytecodeBuilder <O> {
             }
         }
 
-        self.labels.push((label, self.instructions.len()))
+        self.labels.insert(label, self.instructions.len());
+    }
+
+    pub fn add_str(&mut self, str: &str) -> usize {
+        for (i, s) in &self.predef_strings {
+            if *s == str {
+                return *i
+            }
+        }
+        
+        let i = self.predef_strings.len();
+        self.predef_strings.insert(i, str.to_string());
+
+        i
     }
 
     pub fn build(self) -> Bytecode<O> {
-        let mut labels = self.labels.clone();
-        labels.sort_by(|lhs, rhs| lhs.0.cmp(&rhs.0));
-
         let symbols = self.instruction_dict.get_symbols();
 
         Bytecode {
             code: self.instructions,
             data: self.data,
-            labels: labels,
+            predef_strings: self.predef_strings,
+            labels: self.labels,
             symbols: symbols,
 
             instruction_dict: self.instruction_dict

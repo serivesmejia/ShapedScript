@@ -5,22 +5,28 @@ use vm::machine::Machine;
 use vm::instructions::shaped_instructions;
 use vm::bytecode::*;
 
-type Operand = i64;
+use std::convert::TryInto;
 
 fn main() {
-    let instruction_dict = shaped_instructions();
+    let mut builder = BytecodeBuilder::new(shaped_instructions());
 
-    let mut builder = BytecodeBuilder::new(instruction_dict);
+    let str = builder.add_str("hello world");
+    let str2 = builder.add_str(", sebastian");
 
-    builder.add_p("PSH", vec!(1));
-    
+    /*
+    builder.add_p("PUSHO", vec!(1));
+
     builder.add_label(1);
-    builder.add_p("PSH", vec!(5));
-    builder.add_np("ADD");
-    builder.add_np("PRT");
+    builder.add_p("PUSHO", vec!(1));
+    builder.add_np("PLUS");
+    builder.add_np("PRINTOS");
 
-    builder.add_p("JMP", vec!(1));
+    builder.add_p("JUMP", vec!(1));*/
+
+    builder.add_p("CONCATS", vec!(str.try_into().unwrap(), str2.try_into().unwrap()));
+    builder.add_np("PRINTSS");
+
+    builder.add_p("JUMP", vec!(1));
  
-    let mut vm: Machine<Operand> = Machine::new(builder.build());
-    vm.run();
+    Machine::new(builder.build(), 1000000).run();
 }

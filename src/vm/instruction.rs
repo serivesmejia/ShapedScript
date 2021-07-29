@@ -18,6 +18,12 @@ impl <O> InstructionDict<O> {
         InstructionDict(HashMap::new())
     }
 
+    pub fn a_add(&mut self,
+        cname: &str, param_num: usize, func: InstructionFunc<O>
+    ) {
+        self.add(self.0.len(), cname, param_num, func);
+    }
+
     pub fn add(&mut self,
         opcode: usize, cname: &str, 
         param_num: usize, func: InstructionFunc<O>
@@ -42,13 +48,13 @@ impl <O> InstructionDict<O> {
         )
     }
 
-    pub fn get_symbols(&self) -> Vec<(usize, String)> {
-        let mut result = vec!();
+    pub fn get_symbols(&self) -> HashMap<usize, String> {
+        let mut result: HashMap<usize, String> = HashMap::new();
         
         let instructions = &self.0;
 
         for key in instructions.keys() {
-            result.push((*key, (*instructions[key].cname).to_string()));
+            result.insert(*key, (*instructions[key].cname).to_string());
         }
 
         result
